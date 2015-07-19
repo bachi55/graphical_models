@@ -173,6 +173,7 @@ TODO:
 * Add 'marg', 'cond', 'plot' and 'aggr' to the Conditional Gaussians
 * Extend the 'inspect'or to handle Conditional Gaussians
 * How to plot Conditional Gaussians?
+* Add SparseGaussian to the class-hierarchy
 
 (middle priority)
 * Exhaustive testing of the classes. Especially for "border-cases". 
