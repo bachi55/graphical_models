@@ -15,12 +15,13 @@ provides an efficient way to re-use methods like *marginalize*,
 *conditioning*, *plotting*, etc. for different models.
 
 E.g.: Class-tree for a Gaussian:
+
         ProbabilityDensityFunction
         
                 |
                 V
                 
-        MixturesOfGaussians --> SparseMixturesOfGaussians (*)
+        MixturesOfGaussians --> SparseMixturesOfGaussians (A)
         
                 |
                 V
@@ -30,9 +31,9 @@ E.g.: Class-tree for a Gaussian:
                 |
                 V
                 
-        SparseGaussian (**)
+        SparseGaussian (B)
                
-(*) not implemented yet, (**) implemented, but not integrated in the 
+(A) not implemented yet, (B) implemented, but not integrated in the 
 class hierarchy
 
 Probability Models:
