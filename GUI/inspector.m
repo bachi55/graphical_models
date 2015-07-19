@@ -165,6 +165,7 @@ handles.RV2  = RVNames {get (hObject, 'Value')};
 
 % enable the second popupmenu
 set (handles.popupmenu4, 'Enable', 'on');
+
 % fill up the first popupmenu with the still available RV-Names
 RVNames (get (hObject, 'Value')) = [];
 set (handles.popupmenu4, 'String', cellArray2String (RVNames));

@@ -1,5 +1,16 @@
 classdef Gaussian2 < MixtureOfGaussians
     methods 
+        % Constructor
+        % Calls: 
+        %   - Gaussian2():         empty (unestimated) MoG
+        %   - Gaussian2(data):     estimates a MoG from the data
+        %   - Gaussian2(data, par) user defined parameters
+        %
+        % Input:
+        %   - data ... matrix of type Datatable containing the RV names as
+        %              column-names
+        %   - par  ... struct: 
+        %               * 'verbose'    ... output-level: 0=no, 1=info, 2=deb
         function obj = Gaussian2 (varargin)
             if (nargin == 2)
                 varargin{2}.components = 1;
@@ -42,11 +53,5 @@ classdef Gaussian2 < MixtureOfGaussians
             mu    = obj.parameters.mu;
             sigma = obj.parameters.sigma;
         end % function
-        
-        % SETTER
-        
-        % OPERATOR
-%         function outObj = plus (obj1, obj2)       
-%         end % function
     end % methods
 end % classdef

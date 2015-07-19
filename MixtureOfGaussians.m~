@@ -165,8 +165,7 @@ classdef MixtureOfGaussians < ProbabilityDensityFunction
         %                           there label
         % Input:
         %   - data   ... matrix of type Datatable
-        %   - labels ... (numerical) vector containing the labels for 
-        %                data-points
+        %   - labels ... vector containing the labels for data-points
         function plot (obj, varargin)
             [D, K] = size (obj.parameters.mu);
             if (D > 2)
@@ -227,14 +226,10 @@ classdef MixtureOfGaussians < ProbabilityDensityFunction
             end ; end % for
         end % function
         
-        % Function to start the inspector: See it's code for details.
         function inspect (obj)
             inspector (obj);
         end % function
         
-        % Aggregation function:
-        % Input:
-        %   - mode ... string {'mode', 'mean'}
         function val = aggregation (obj, type)
             if (nargin < 2)
                 type = 'mode'; % maximum of the density

@@ -1,4 +1,4 @@
-classdef SparseGaussian < Gaussian 
+classdef SparseGaussian < Gaussian
     methods 
         % Constructor
         function obj = SparseGaussian (dataTable, reg)
@@ -16,16 +16,10 @@ classdef SparseGaussian < Gaussian
         end % function
         
         % Plot function
-        function plot (obj, data)
+        function plot (obj)
             adjMatrix = (obj.parameters.prec ~= 0);
             view (biograph (adjMatrix - triu (adjMatrix), obj.RVNames, ...
                 'ShowArrows', 'off'));
-            
-            if (nargin < 2) 
-                plot@Gaussian (obj);
-            else 
-                plot@Gaussian (obj, data);
-            end % if 
         end % function
     end % methods
     
