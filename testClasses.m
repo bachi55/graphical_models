@@ -1,10 +1,11 @@
+%% prepare workspace
 addpath ('library/QUIC/');
 addpath ('GUI/');
 
+%% test simple gaussian
 dataTable = loadDataset ('trees');
 
 g = Gaussian2 (dataTable);
-g.disp ();
 g.plot (dataTable);
 
 g.marg ({'Girth', 'Volume'});
