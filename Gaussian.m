@@ -13,6 +13,9 @@ classdef Gaussian < ProbabilityDensityFunction
     
     methods 
         % Constructor
+        % Input: 
+        %   - dataTable ... matrix of type Datatable containing the RV 
+        %                   names as column-names
         function obj = Gaussian (dataTable)
             if (nargin == 0)
                 obj.isEstimated = 0;
@@ -71,48 +74,81 @@ classdef Gaussian < ProbabilityDensityFunction
             end % if
         end % function
         
-        % Densitiy value for given data
+        % Returns the probability for given data
+        % Input:
+        %   - X ... data-matrix containing data-points row-wise
         function prob = p (obj, X)
             prob = mvnpdf (X, obj.parameters.mu', obj.parameters.sigma);
         end % function
         
         % Plot the density
-        function plot (obj, data)
-            [D, ~] = size (obj.parameters.mu);
-            subplot1 (D-1, D-1, 'Gap', [0.01, 0.01]);
+        % Calls:
+        %   - plot():               plots the densities with error-ellipses
+        %   - plot(data):           plots the densities joint with the data
+        %   - plot(data, labels):   colors the data-points according to
+        %                           there label
+        % Input:
+        %   - data   ... matrix of type Datatable
+        %   - labels ... (numerical) vector containing the labels for 
+        %                data-points
+        function plot (obj, varargin)
+            [D, K] = size (obj.parameters.mu);
+            if (D > 2)
+                subplot1 (D-1, D-1, 'Gap', [0.01, 0.01]);
+            end % if 
             
             p = 1;
-            if (nargin < 2) % only plot density as heatmap
-                error ('TODO: Implement the Gaussian heat-map.');           
-                for i = 1:D ; for j = 1:D
-                    if (i ~= j)
-                        subplot (ind2sub ([D-1, D-1], p));
-                        p = p + 1;
-                    end % if 
-                end ; end % for
-            else            % plot density and data joint
-                for i = 2:D ; for j = 1:(i-1)     
-                    % plot the data-points
-                    subplot1 ((i-2) * (D-1) + j);
-                    C = linspecer (1);
-                    scatter (data(:, j), data(:, i), 25, C, '*');
-                    
-                    % put labels to the axes
-                    if (j == 1)
-                        ylabel (obj.RVNames(i));
-                    end % if
-                    if (i == D)
-                        xlabel (obj.RVNames(j));
-                    end % if
-
-                    % plot gaussians
-                    [mu, sigma, ~] = obj.marg_const_ ({obj.RVNames{j}, obj.RVNames{i}});
-                    hold on;                        
-                    error_ellipse2 (sigma, mu, 0.9, 'Color', C);
-                    hold off;
-                    p = p + 1;
-                end ; end % for
+            % plot density and data joint
+            
+            if (nargin > 1)
+                data = table2array (varargin{1}(:, obj.RVNames));
             end % if
+
+            for i = 2:D ; for j = 1:(i-1)
+                % plot the data-points
+                if (D > 2)
+                    subplot1 ((i-2) * (D-1) + j);
+                end % if
+                C = linspecer (K); % get K different colors                    
+                    
+      
+                if (nargin > 2)     % labels are given
+                    C = linspecer (numel (unique (varargin{2}))); % get K different colors
+                    pointColors = C(labels, :);
+                elseif (nargin > 1) % data-points are given
+                    % determine the most-likely mixture component for every
+                    % data-point
+                    [~, mostLikelyComponent] = max (obj.p_perComponent_ (data), [], 2);    
+                    pointColors = C(mostLikelyComponent, :);
+                end % if
+
+                if (nargin > 1)
+                    scatter (data(:, j), data(:, i), 25, pointColors, '.');
+                    hold on;
+                end % if
+
+                % put labels to the axes
+                if (j == 1)
+                    ylabel (obj.RVNames(i));
+                end % if
+                if (i == D)
+                    xlabel (obj.RVNames(j));
+                end % if
+
+                % plot gaussians                       
+                copiedObj = obj.marg_const ( ...
+                    {obj.RVNames{j}, obj.RVNames{i}});
+                [~, mu, sigma, ~] = copiedObj.getDensityParameters();
+
+                for k = 1:K
+                    plot (mu(1, k), mu(2, k), '*', 'Color', C(k, :));
+                    hold on;
+                    error_ellipse2 (sigma(:, :, k), mu(:, k), 0.9, ...
+                        'Color', C(k, :));    
+                end % for
+                hold off;
+                p = p + 1;
+            end ; end % for
         end % function
     end % methods
     
@@ -123,7 +159,7 @@ classdef Gaussian < ProbabilityDensityFunction
         end % function
         
         % Marginalize without side-effects
-        function [mu, sigma, prec] = marg_const_ (obj, RVNames)
+        function [mu, sigma, prec] = marg_const (obj, RVNames)
             checkRVNames (obj.RVNames, RVNames);
             
             [~, J] = getIJ (obj.RVNames, RVNames);
