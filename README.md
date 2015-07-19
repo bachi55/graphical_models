@@ -68,7 +68,7 @@ addpath ('GUI/');
 
 ### Gaussian
 Than lets estimate and plot a simple Gaussian:
-```
+```matlab
 dataTable = loadDataset ('trees');
 g = Gaussian2 (dataTable);
 g.plot (dataTable);
